@@ -40,14 +40,18 @@
       this.timer = new System.Windows.Forms.Timer(this.components);
       this.cbMD5 = new System.Windows.Forms.CheckBox();
       this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
+      this.txtBackupPath = new System.Windows.Forms.TextBox();
       this.fldBrowse = new System.Windows.Forms.FolderBrowserDialog();
+      this.cbCopyData = new System.Windows.Forms.CheckBox();
+      this.cbBackup = new System.Windows.Forms.CheckBox();
+      this.label1 = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
       // btnGo
       // 
       this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnGo.Enabled = false;
-      this.btnGo.Location = new System.Drawing.Point(205, 171);
+      this.btnGo.Location = new System.Drawing.Point(205, 245);
       this.btnGo.Name = "btnGo";
       this.btnGo.Size = new System.Drawing.Size(75, 23);
       this.btnGo.TabIndex = 5;
@@ -60,7 +64,7 @@
       // 
       this.cboDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cboDrive.FormattingEnabled = true;
-      this.cboDrive.Location = new System.Drawing.Point(66, 12);
+      this.cboDrive.Location = new System.Drawing.Point(79, 12);
       this.cboDrive.Name = "cboDrive";
       this.cboDrive.Size = new System.Drawing.Size(121, 21);
       this.cboDrive.TabIndex = 1;
@@ -70,7 +74,7 @@
       // lblDrive
       // 
       this.lblDrive.AutoSize = true;
-      this.lblDrive.Location = new System.Drawing.Point(12, 15);
+      this.lblDrive.Location = new System.Drawing.Point(25, 15);
       this.lblDrive.Name = "lblDrive";
       this.lblDrive.Size = new System.Drawing.Size(48, 13);
       this.lblDrive.TabIndex = 2;
@@ -80,9 +84,9 @@
       // 
       this.txtPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.txtPath.Location = new System.Drawing.Point(66, 50);
+      this.txtPath.Location = new System.Drawing.Point(79, 117);
       this.txtPath.Name = "txtPath";
-      this.txtPath.Size = new System.Drawing.Size(214, 20);
+      this.txtPath.Size = new System.Drawing.Size(201, 20);
       this.txtPath.TabIndex = 2;
       this.ToolTip.SetToolTip(this.txtPath, "Please Enter the Path to copy the ElectionData from");
       this.txtPath.TextChanged += new System.EventHandler(this.txtPath_TextChanged);
@@ -90,7 +94,7 @@
       // lblDirectory
       // 
       this.lblDirectory.AutoSize = true;
-      this.lblDirectory.Location = new System.Drawing.Point(14, 53);
+      this.lblDirectory.Location = new System.Drawing.Point(27, 120);
       this.lblDirectory.Name = "lblDirectory";
       this.lblDirectory.Size = new System.Drawing.Size(46, 13);
       this.lblDirectory.TabIndex = 4;
@@ -103,9 +107,9 @@
       // 
       this.lblInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.lblInfo.Location = new System.Drawing.Point(63, 73);
+      this.lblInfo.Location = new System.Drawing.Point(76, 140);
       this.lblInfo.Name = "lblInfo";
-      this.lblInfo.Size = new System.Drawing.Size(217, 44);
+      this.lblInfo.Size = new System.Drawing.Size(204, 44);
       this.lblInfo.TabIndex = 5;
       this.lblInfo.Text = "The Root Dir is the directory that contains the  ElectionData Folder NOT the Elec" +
           "tionData folder itself";
@@ -113,7 +117,7 @@
       // cbLoop
       // 
       this.cbLoop.AutoSize = true;
-      this.cbLoop.Location = new System.Drawing.Point(66, 121);
+      this.cbLoop.Location = new System.Drawing.Point(79, 188);
       this.cbLoop.Name = "cbLoop";
       this.cbLoop.Size = new System.Drawing.Size(76, 17);
       this.cbLoop.TabIndex = 3;
@@ -126,7 +130,7 @@
       // lblStatus
       // 
       this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.lblStatus.Location = new System.Drawing.Point(18, 176);
+      this.lblStatus.Location = new System.Drawing.Point(18, 250);
       this.lblStatus.Name = "lblStatus";
       this.lblStatus.Size = new System.Drawing.Size(181, 18);
       this.lblStatus.TabIndex = 7;
@@ -139,7 +143,7 @@
       // cbMD5
       // 
       this.cbMD5.AutoSize = true;
-      this.cbMD5.Location = new System.Drawing.Point(66, 145);
+      this.cbMD5.Location = new System.Drawing.Point(79, 212);
       this.cbMD5.Name = "cbMD5";
       this.cbMD5.Size = new System.Drawing.Size(102, 17);
       this.cbMD5.TabIndex = 4;
@@ -148,16 +152,62 @@
       this.cbMD5.UseVisualStyleBackColor = true;
       this.cbMD5.CheckedChanged += new System.EventHandler(this.cbMD5_CheckedChanged);
       // 
+      // txtBackupPath
+      // 
+      this.txtBackupPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtBackupPath.Location = new System.Drawing.Point(79, 68);
+      this.txtBackupPath.Name = "txtBackupPath";
+      this.txtBackupPath.Size = new System.Drawing.Size(201, 20);
+      this.txtBackupPath.TabIndex = 10;
+      this.ToolTip.SetToolTip(this.txtBackupPath, "Please Enter the Path to copy the ElectionData from");
+      this.txtBackupPath.TextChanged += new System.EventHandler(this.txtBackupPath_TextChanged);
+      // 
       // fldBrowse
       // 
       this.fldBrowse.ShowNewFolderButton = false;
+      // 
+      // cbCopyData
+      // 
+      this.cbCopyData.AutoSize = true;
+      this.cbCopyData.Location = new System.Drawing.Point(79, 94);
+      this.cbCopyData.Name = "cbCopyData";
+      this.cbCopyData.Size = new System.Drawing.Size(117, 17);
+      this.cbCopyData.TabIndex = 8;
+      this.cbCopyData.Text = "Copy Election Data";
+      this.cbCopyData.UseVisualStyleBackColor = true;
+      this.cbCopyData.CheckedChanged += new System.EventHandler(this.cbCopyData_CheckedChanged);
+      // 
+      // cbBackup
+      // 
+      this.cbBackup.AutoSize = true;
+      this.cbBackup.Location = new System.Drawing.Point(79, 45);
+      this.cbBackup.Name = "cbBackup";
+      this.cbBackup.Size = new System.Drawing.Size(124, 17);
+      this.cbBackup.TabIndex = 9;
+      this.cbBackup.Text = "Backup Source Disk";
+      this.cbBackup.UseVisualStyleBackColor = true;
+      this.cbBackup.CheckedChanged += new System.EventHandler(this.cbBackup_CheckedChanged);
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(13, 71);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(60, 13);
+      this.label1.TabIndex = 11;
+      this.label1.Text = "Backup Dir";
       // 
       // frmMain
       // 
       this.AcceptButton = this.btnGo;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(292, 206);
+      this.ClientSize = new System.Drawing.Size(292, 280);
+      this.Controls.Add(this.label1);
+      this.Controls.Add(this.txtBackupPath);
+      this.Controls.Add(this.cbBackup);
+      this.Controls.Add(this.cbCopyData);
       this.Controls.Add(this.cbMD5);
       this.Controls.Add(this.lblStatus);
       this.Controls.Add(this.cbLoop);
@@ -192,6 +242,10 @@
     private System.Windows.Forms.CheckBox cbMD5;
     private System.Windows.Forms.ToolTip ToolTip;
     private System.Windows.Forms.FolderBrowserDialog fldBrowse;
+    private System.Windows.Forms.CheckBox cbCopyData;
+    private System.Windows.Forms.CheckBox cbBackup;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.TextBox txtBackupPath;
   }
 }
 

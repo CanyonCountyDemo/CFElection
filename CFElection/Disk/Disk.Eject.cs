@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Threading;
 using System.Runtime.InteropServices;
+using System.Threading;
 
-namespace CFElection
+namespace CC.Common.Utils
 {
   // Partial Class - handles ejecting a disk - only tested on a CF Drive
   public static partial class Disk

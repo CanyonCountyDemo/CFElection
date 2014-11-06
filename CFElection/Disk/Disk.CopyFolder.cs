@@ -2,7 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 
-namespace CFElection
+namespace CC.Common.Utils
 {
   // Partial class - Handles copying a directory with MD5 checksum
   public static partial class Disk

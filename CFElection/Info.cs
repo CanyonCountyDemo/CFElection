@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace CFElection
+﻿namespace CFElection
 {
   // Wrapper object for settings
   public class Info
@@ -12,6 +7,9 @@ namespace CFElection
     private string _path;
     private bool _loop;
     private bool _md5;
+    private bool _copy;
+    private bool _backup;
+    private string _backupPath;
 
     public Info()
     {
@@ -20,6 +18,9 @@ namespace CFElection
       _path = Properties.Settings.Default.Path;
       _loop = Properties.Settings.Default.Loop;
       _md5 = Properties.Settings.Default.Md5;
+      _copy = Properties.Settings.Default.Copy;
+      _backup = Properties.Settings.Default.Backup;
+      _backupPath = Properties.Settings.Default.BackupPath;
     }
 
     public string Drive
@@ -34,6 +35,12 @@ namespace CFElection
       set { _path = value; }
     }
 
+    public string BackupPath
+    {
+      get { return _backupPath; }
+      set { _backupPath = value; }
+    }
+
     public bool Loop
     {
       get { return _loop; }
@@ -46,6 +53,18 @@ namespace CFElection
       set { _md5 = value; }
     }
 
+    public bool Copy
+    {
+      get { return _copy; }
+      set { _copy = value; }
+    }
+
+    public bool Backup
+    {
+      get { return _backup; }
+      set { _backup = value; }
+    }
+
     public char DriveLetter
     {
       get { return _drive[0]; }
@@ -55,8 +74,11 @@ namespace CFElection
     {
       _drive = "";
       _path = "";
+      _backupPath = "";
       _loop = false;
       _md5 = false;
+      _copy = false;
+      _backup = false;
     }
 
     public void Save()
@@ -65,6 +87,9 @@ namespace CFElection
       Properties.Settings.Default.Path = _path;
       Properties.Settings.Default.Loop = _loop;
       Properties.Settings.Default.Md5 = _md5;
+      Properties.Settings.Default.Copy = _copy;
+      Properties.Settings.Default.Backup = _backup;
+      Properties.Settings.Default.BackupPath = _backupPath;
 
       Properties.Settings.Default.Save();
     }

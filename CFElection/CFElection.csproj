@@ -49,16 +49,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Disk.CopyFolder.cs" />
-    <Compile Include="Disk.Eject.cs" />
+    <Compile Include="Disk\Disk.Label.cs" />
+    <Compile Include="Disk\Disk.CopyFolder.cs" />
+    <Compile Include="Disk\Disk.Crap.cs" />
+    <Compile Include="Disk\Disk.Drives.cs" />
+    <Compile Include="Disk\Disk.Eject.cs" />
+    <Compile Include="Disk\Disk.Ready.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="Disk.Format.cs" />
+    <Compile Include="Disk\Disk.Format.cs" />
     <Compile Include="Info.cs" />
+    <Compile Include="InputBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="frmMain.resx">
@@ -83,6 +90,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

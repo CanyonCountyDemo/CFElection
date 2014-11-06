@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
+using CC.Common.Utils;
 
 namespace CFElection
 {
-  public partial class frmMain : Form
+  public partial class frmMain : Form, ICheckCancel
   {
     private Info info;
     private Font baseFont;
+    private bool _cancel;
 
     public frmMain()
     {
@@ -23,17 +20,15 @@ namespace CFElection
 
     private void frmMain_Load(object sender, EventArgs e)
     {
-      DriveInfo[] drives = DriveInfo.GetDrives();
-      foreach (DriveInfo drive in drives)
-      {
-        if (drive.DriveType == DriveType.Removable)
-          cboDrive.Items.Add(drive.ToString());
-      }
+      cboDrive.Items.AddRange(Disk.GetDrives(DiskType.Removable));
 
       txtPath.Text = info.Path;
       cboDrive.SelectedItem = info.Drive;
       cbLoop.Checked = info.Loop;
       cbMD5.Checked = info.Md5;
+      cbCopyData.Checked = info.Copy;
+      cbBackup.Checked = info.Backup;
+      txtBackupPath.Text = info.BackupPath;
 
       SetStatus("");
       timer.Enabled = true;
@@ -80,6 +75,8 @@ namespace CFElection
     {
       // Don't need or care for the CheckGo here
       info.Loop = cbLoop.Checked;
+      // This flag is not needed with a working CheckGo() method
+      //_cancel = !cbLoop.Checked; // Cancel if WaitForReady is active
     }
     
     private void cbMD5_CheckedChanged(object sender, EventArgs e)
@@ -88,10 +85,18 @@ namespace CFElection
       info.Md5 = cbMD5.Checked;
     }
 
+    private void cbCopyData_CheckedChanged(object sender, EventArgs e)
+    {
+      info.Copy = cbCopyData.Checked;
+      CheckGo();
+    }
+
     private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
     {
       //info.Zap(); // Clears any settings / revert to defaults / used for testing
       info.Save();
+      // With this flag missing the app will not close quickly if it's waiting for a drive
+      _cancel = true;
     }
 
     private void timer_Tick(object sender, EventArgs e)
@@ -132,44 +137,92 @@ namespace CFElection
     {
       // Make sure the Go Button Can be enabled
       int err = 0;
-      try
-      {
-        DriveInfo drive = new DriveInfo(info.Drive);
-        if (!drive.IsReady) err++;
 
-        string[] dirs = Directory.GetDirectories(info.Path);
-        //if (!dirs.Contains("ElectionData")) err++;
-        err++;
-        foreach (String dir in dirs)
+      if (!Disk.IsReady(info.DriveLetter)) err++;
+      if (_cancel) err++;
+      if (cbCopyData.Checked)
+      {
+        try
         {
-          if (dir.Contains("ElectionData")) err--;
+          string[] dirs = Directory.GetDirectories(info.Path);
+          //if (!dirs.Contains("ElectionData")) err++;
+          err++;
+          foreach (String dir in dirs)
+          {
+            if (dir.Contains("ElectionData")) err--;
+          }
+        }
+        catch
+        {
+          err++;
         }
       }
-      catch
+
+      if (cbBackup.Checked)
       {
-        err++;
+        if (!Directory.Exists(txtBackupPath.Text)) err++;
       }
+
+      txtPath.Enabled = info.Copy;
+      cbMD5.Enabled = info.Copy || info.Backup;
+      txtBackupPath.Enabled = info.Backup;
 
       btnGo.Enabled = err == 0;
     }
 
     private bool CopyData()
     {
-      SetStatus("Formatting Disk");
+      SetStatus("Waiting for Disk");
       bool ret = false;
-      if (Disk.Format(info.DriveLetter))
-      {
-        SetStatus("Copying ElectionData");
-        try
-        {
-          Disk.CopyFolder(info.Path, info.Drive, info.Md5);
-        }
-        catch (Exception e)
-        {
-          MessageBox.Show(e.Message + "\n\nYou should replace this Compact Flash Card");
-          //CopyData();
-        }
+      
+      // Dubious loop - woot!
+      //while (!Disk.IsReady(info.DriveLetter))
+      //{
+      //  Thread.Sleep(1000);
+      //  Application.DoEvents();
+      //}
 
+      // Delegate
+      //Disk.WaitForReady(info.DriveLetter, CheckCancel);
+      // Interface
+      Disk.WaitForReady(info.DriveLetter, this);
+
+      // Check to see if the user canceled
+      if (_cancel)
+      {
+        SetStatus("");
+        return false;
+      }
+      // Backup the disk first
+      if (info.Backup)
+      {
+        string path = info.BackupPath + Path.DirectorySeparatorChar + GetDiskInfo(info.DriveLetter);
+        string[] files = Directory.GetFiles(info.Drive);
+        if (files.Length > 1) // .electinfo is 1
+        {
+          Directory.CreateDirectory(path.Trim());
+          SetStatus("Backing up Disk");
+          Disk.CopyFolder(info.Drive, path, info.Md5);
+        }
+      }
+
+      SetStatus("Formatting Disk");
+
+      if (Disk.Format(info.DriveLetter, true))
+      {
+        if (cbCopyData.Checked)
+        {
+          SetStatus("Copying ElectionData");
+          try
+          {
+            Disk.CopyFolder(info.Path, info.Drive, info.Md5);
+          }
+          catch (Exception e)
+          {
+            MessageBox.Show(e.Message + "\n\nYou should replace this Compact Flash Card");
+            //CopyData();
+          }
+        }
         SetStatus("Ejecting Disk");
         Disk.Eject(info.Drive);
         SetStatus("Done");
@@ -184,10 +237,69 @@ namespace CFElection
       return ret;
     }
 
+    private void InputBox_Validating(object sender, InputBoxValidatingArgs e)
+    {
+      if (e.Text.Trim().Length == 0)
+      {
+        e.Cancel = true;
+        e.Message = "You must enter a directory name for this disk";
+      }
+      if (Directory.Exists(info.BackupPath + Path.DirectorySeparatorChar + e.Text))
+      {
+        e.Cancel = true;
+        e.Message = "Name already exists, enter a different one";
+      }
+    }
+
+    private string GetDiskInfo(char driveLetter)
+    {
+      string ret = "";
+      string file = driveLetter.ToString() + @":\.electinfo";
+      if (File.Exists(file))
+      {
+        TextReader tr = new StreamReader(file);
+        ret = tr.ReadToEnd().Trim();
+        tr.Close();
+      }
+      
+      if (String.IsNullOrEmpty(ret))
+      {
+        ret = Disk.GetVolumeLabel(driveLetter);
+      }
+
+      if (String.IsNullOrEmpty(ret))
+      {
+        InputBoxResult res = InputBox.Show("No Disk Info found\n\nPlease enter a name", 
+          "No Disk Info", "default", new InputBoxValidatingHandler(InputBox_Validating));
+        if (res.OK)
+          ret = res.Text;
+      }
+      return ret;
+    }
+
     private void SetStatus(string status)
     {
       lblStatus.Text = status;
       Application.DoEvents();
+    }
+
+    // For an interface this has to be public
+    // using it as a delegate it can be private
+    public void CheckCancel(ref bool cancel)
+    {
+      cancel = _cancel;
+    }
+
+    private void cbBackup_CheckedChanged(object sender, EventArgs e)
+    {
+      info.Backup = cbBackup.Checked;
+      CheckGo();
+    }
+
+    private void txtBackupPath_TextChanged(object sender, EventArgs e)
+    {
+      info.BackupPath = txtBackupPath.Text;
+      CheckGo();
     }
 
   }
