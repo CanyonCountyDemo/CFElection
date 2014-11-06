@@ -278,6 +278,18 @@ namespace CFElection
         if (res.OK)
           ret = res.Text;
       }
+
+      if (ret.Equals("BD")) ret = "Ballot Definition";
+      if (ret.StartsWith("LC"))
+      {
+        string[] d = ret.Split(' ');
+        ret = "L & A County " + d[1];
+      }
+      if (ret.StartsWith("LS"))
+      {
+        string[] d = ret.Split(' ');
+        ret = "L & A State " + d[1];
+      }
       return ret;
     }
 
