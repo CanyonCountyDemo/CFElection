@@ -67,7 +67,13 @@
 
     public char DriveLetter
     {
-      get { return _drive[0]; }
+      get 
+      {
+        if (_drive.Length > 0)
+          return _drive[0];
+        else
+          return '\0';//??
+      }
     }
 
     public void Zap()

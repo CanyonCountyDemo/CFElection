@@ -138,7 +138,11 @@ namespace CFElection
       // Make sure the Go Button Can be enabled
       int err = 0;
 
-      if (!Disk.IsReady(info.DriveLetter)) err++;
+      // Check for a valid disk
+      if (info.DriveLetter != '\0')
+      {
+        if (!Disk.IsReady(info.DriveLetter)) err++;
+      }
       if (_cancel) err++;
       if (cbCopyData.Checked)
       {
